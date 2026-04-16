@@ -6,6 +6,8 @@ import helmet from 'helmet';
 import connectDB from './config/db.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
+import employeeRoutes from './routes/employeeRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -32,6 +34,8 @@ app.get('/', (req, res) => {
 
 // Mounted Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Error Handling Middleware
 app.use(notFound);

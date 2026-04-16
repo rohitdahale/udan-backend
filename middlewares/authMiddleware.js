@@ -29,13 +29,19 @@ const protect = async (req, res, next) => {
   }
 };
 
-const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'Admin') {
-    next();
-  } else {
-    res.status(401);
-    throw new Error('Not authorized as an admin');
-  }
+const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      res.status(401);
+      throw new Error('Not authorized, no user found');
+    }
+    if (roles.includes(req.user.role)) {
+      next();
+    } else {
+      res.status(403);
+      throw new Error(`Role (${req.user.role}) is not allowed to access this resource`);
+    }
+  };
 };
 
-export { protect, admin };
+export { protect, authorizeRoles };
