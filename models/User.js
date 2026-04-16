@@ -45,6 +45,13 @@ const userSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret.empId; // Frontend uses this
+        delete ret.password;
+      }
+    }
   }
 );
 

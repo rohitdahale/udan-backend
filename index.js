@@ -8,6 +8,9 @@ import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import leaveRoutes from './routes/leaveRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
+import noticeRoutes from './routes/noticeRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -36,6 +39,9 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/leaves', leaveRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/notices', noticeRoutes);
 
 // Error Handling Middleware
 app.use(notFound);

@@ -46,7 +46,10 @@ const getEmployees = async (req, res, next) => {
 // @access  Private
 const getEmployeeById = async (req, res, next) => {
   try {
-    const employee = await User.findById(req.params.id).select('-password');
+    let employee = await User.findOne({ empId: req.params.id }).select('-password');
+    if (!employee && req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      employee = await User.findById(req.params.id).select('-password');
+    }
     if (employee) {
       res.json({ data: employee });
     } else {
@@ -63,7 +66,8 @@ const getEmployeeById = async (req, res, next) => {
 // @access  Private/Admin
 const createEmployee = async (req, res, next) => {
   try {
-    const { empId, name, role, dept, email, password, phone, status, joinDate, avatar } = req.body;
+    const { name, role, dept, email, password, phone, status, joinDate, avatar } = req.body;
+    const empId = req.body.empId || `EMP${String(Math.floor(Math.random() * 900) + 100).padStart(3, '0')}`;
 
     const userExists = await User.findOne({ email });
     const empIdExists = await User.findOne({ empId });
@@ -92,15 +96,7 @@ const createEmployee = async (req, res, next) => {
     });
 
     if (employee) {
-      res.status(201).json({
-        data: {
-          _id: employee._id,
-          empId: employee.empId,
-          name: employee.name,
-          email: employee.email,
-          role: employee.role,
-        },
-      });
+      res.status(201).json({ data: employee });
     } else {
       res.status(400);
       throw new Error('Invalid employee data');
@@ -115,7 +111,10 @@ const createEmployee = async (req, res, next) => {
 // @access  Private/Admin/HR
 const updateEmployee = async (req, res, next) => {
   try {
-    const employee = await User.findById(req.params.id);
+    let employee = await User.findOne({ empId: req.params.id });
+    if (!employee && req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      employee = await User.findById(req.params.id);
+    }
 
     if (!employee) {
       res.status(404);
@@ -164,7 +163,10 @@ const updateEmployee = async (req, res, next) => {
 // @access  Private/Admin
 const deleteEmployee = async (req, res, next) => {
   try {
-    const employee = await User.findById(req.params.id);
+    let employee = await User.findOne({ empId: req.params.id });
+    if (!employee && req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      employee = await User.findById(req.params.id);
+    }
 
     if (employee) {
       await User.deleteOne({ _id: employee._id });
